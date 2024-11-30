@@ -15,6 +15,8 @@ const Login = () => {
         try {
             const response = await axios.post('http://localhost:5000/auth/login', { email, password })
             if (response.data.success) {
+                console.log(response);
+
                 login(response.data.user)
                 localStorage.setItem("token", response.data.token)
                 navigate('/')

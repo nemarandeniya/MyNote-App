@@ -2,6 +2,10 @@ import express from 'express';
 import User from '../models/Users.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv';
+import middleware from '../middleware/middleware.js';
+
+dotenv.config()
 
 const router = express.Router()
 
@@ -36,7 +40,7 @@ router.post('/login', async (req, res) => {
         if (!checkpassword) {
             return res.status(401).json({ success: false, message: "Wrong Credentials" })
         }
-        const token = jwt.sign({ id: user._id }, "secretkey123@#", { expiresIn: "24h" }
+        const token = jwt.sign({ id: user._id }, process.env.TOKEN_KEY, { expiresIn: "24h" }
         )
 
         res.status(200).json({ success: true, token, user: { name: user.name }, message: "Login successfully!" });
@@ -44,5 +48,10 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ success: false, message: "Something wrong! Error in login Server!" })
     }
 })
+
+router.get('/verify', middleware, async (req, res) => {
+    return res.status(200).json({ success: true, user: req.user })
+})
+
 
 export default router;
